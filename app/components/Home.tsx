@@ -11,6 +11,7 @@ const Home = () => {
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [movie, setMovie] = useState<Movie | null>(null);
   const search = useSearchParams();
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -39,15 +40,24 @@ const Home = () => {
           )
           .then((res) => {
             setMovie(res.data);
-            setIsLoading(false);
-            setIsImageLoading(false);
+            setError(false);
+          })
+          .catch((err) => {
+            setError(true);
           });
+      })
+      .catch((err) => {
+        setError(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setIsImageLoading(false);
       });
   }, [search]);
 
   return (
     <div className="bg-secondary relative px-4 md:px-0">
-      <div className="container mx-auto min-h-[calc(100vh-77px)] flex items-center relative">
+      <div className="container mx-auto min-h-[calc(100vh-77px)] flex items-center relative justify-center">
         <div className="flex flex-col lg:flex-row gap-10 lg:mx-10 py-20">
           {isLoading && <Loader />}
           {movie && (
@@ -100,6 +110,11 @@ const Home = () => {
                 </div>
               </div>
             </>
+          )}
+          {error && (
+            <div>
+              <h1>Sorry !! Movie not found !!</h1>
+            </div>
           )}
         </div>
       </div>
